@@ -183,8 +183,14 @@ export const ComboboxOption = styled(ComboboxOptionInternal)`
   cursor: default;
   outline: none;
   &[aria-selected='true'] {
+    svg {
+      color: ${props => props.theme.colors.semanticColors.primary.main};
+    }
+  }
+
+  &:hover {
     background-color: ${props =>
-      props.theme.colors.semanticColors.primary.lighter}
+      props.theme.colors.semanticColors.primary.lighter};
   }
 `
 

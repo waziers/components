@@ -48,8 +48,8 @@ import { InputProps, inputPropKeys } from '../InputProps'
 export const CustomizableInputTextAttributes: CustomizableAttributes = {
   borderRadius: 'medium',
   fontSize: 'small',
-  height: '28px',
-  px: 'xsmall',
+  height: '36px',
+  px: 'small',
   py: 'none',
 }
 
@@ -109,11 +109,25 @@ export const InputText = styled(InputComponent).attrs(
   ${typography}
   ${pseudoClasses}
   ${inputTextStyles}
+
+  color: ${props => props.theme.colors.palette.charcoal700};
+  &:hover {
+    border-color: ${props => props.theme.colors.palette.charcoal300};
+  }
+  &:focus {
+    border-color: ${props => props.theme.colors.palette.purple300};
+    box-shadow: 0 0 0 2px ${props => props.theme.colors.palette.purple100};
+    outline: none;
+  }
+  &:disabled  {
+    background: ${props => props.theme.colors.palette.charcoal100};
+    color: ${props => props.theme.colors.palette.charcoal400};
+  }
 `
 
 InputText.defaultProps = {
   border: 'solid 1px',
-  borderColor: 'palette.charcoal300',
+  borderColor: 'palette.charcoal200',
   borderRadius: CustomizableInputTextAttributes.borderRadius,
   fontSize: CustomizableInputTextAttributes.fontSize,
   height: CustomizableInputTextAttributes.height,

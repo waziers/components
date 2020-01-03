@@ -172,8 +172,8 @@ export const InputSearch = styled(InputSearchComponent)`
   ${inputTextStyles}
 
   &:focus-within {
-    border-color: transparent;
-    outline: 5px auto -webkit-focus-ring-color;
+    border-color: ${props => props.theme.colors.palette.purple300};
+    box-shadow: 0 0 0 2px ${props => props.theme.colors.palette.purple100};
   }
 
   ${InputText} {
@@ -181,6 +181,7 @@ export const InputSearch = styled(InputSearchComponent)`
     width: 100%;
     appearance: none;
     background: transparent;
+    box-shadow: none;
 
     &::-webkit-search-decoration,
     &::-webkit-search-cancel-button,
@@ -193,6 +194,6 @@ export const InputSearch = styled(InputSearchComponent)`
 
 InputSearch.defaultProps = {
   border: '1px solid',
-  borderColor: 'palette.charcoal300',
+  borderColor: 'palette.charcoal200',
   borderRadius: CustomizableInputTextAttributes.borderRadius,
 }
