@@ -2,9 +2,8 @@
   "name": "@looker/components",
   "license": "MIT",
   "version": "0.7.16",
-  "main": "dist/cjs/index.js",
+  "main": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
-  "module": "dist/esm/index.js",
   "files": [
     "dist"
   ],
@@ -17,12 +16,9 @@
     "access": "public"
   },
   "scripts": {
-    "build:all": "yarn clean && yarn run build:esm && yarn run build:cjs",
-    "build:esm": "ttsc --project tsconfig.build.json --module es2015 --target es6 --outDir dist/esm",
-    "build:cjs": "ttsc --project tsconfig.build.json --module commonjs --target es6 --outDir dist/cjs",
-    "clean": "rm -Rf ./dist",
-    "develop": "yarn clean && ttsc --project tsconfig.build.json --watch --module commonjs --target es6 --outDir dist/cjs",
-    "develop-playground": "ttsc --project tsconfig.build.json --watch --module es2015 --target es6 --outDir dist/esm"
+    "build:declaration": "tsc --project tsconfig.build.json",
+    "build:es": "BABEL_ENV=build babel src --root-mode upward --out-dir dist/esm --source-maps --extensions .ts,.tsx --delete-dir-on-start --no-comments",
+    "develop": "yarn build:es --watch --verbose"
   },
   "dependencies": {
     "@looker/design-tokens": "^0.7.15",
