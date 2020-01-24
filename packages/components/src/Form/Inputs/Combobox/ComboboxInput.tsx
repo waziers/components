@@ -71,7 +71,13 @@ export interface ComboboxInputProps
   autoComplete?: boolean
 }
 
-export const ComboboxInputInternal = forwardRef(function ComboboxInput(
+export interface UseComboboxInputProps
+  extends Omit<ComboboxInputProps, 'value' | 'onChange'> {
+  inputValue?: string
+  onInputChange?: (e: FormEvent<HTMLInputElement>) => void
+}
+
+function useComboboxInput(
   {
     // highlights all the text in the box on click when true
     selectOnClick = false,
@@ -82,19 +88,19 @@ export const ComboboxInputInternal = forwardRef(function ComboboxInput(
 
     // wrapped events
     onClick,
+    onInputChange,
     onMouseDown,
     onClear,
-    onChange,
     onKeyDown,
     onBlur,
     onFocus,
 
     // might be controlled
-    value: controlledValue,
+    inputValue: controlledValue,
     ...props
-  }: ComboboxInputProps,
+  }: UseComboboxInputProps,
   forwardedRef: Ref<HTMLInputElement>
-) {
+): [UseComboboxInputProps, Ref<HTMLInputElement>] {
   const {
     data: {
       navigationOption,
@@ -126,10 +132,6 @@ export const ComboboxInputInternal = forwardRef(function ComboboxInput(
 
   const isControlled = controlledValue !== undefined
 
-  // Need to determine whether the updated value come from change event on the input
-  // or from a new value prop (controlled)
-  const isInputting = useRef(false)
-
   useLayoutEffect(() => {
     if (autoCompletePropRef) autoCompletePropRef.current = autoComplete
     if (readOnlyPropRef) readOnlyPropRef.current = readOnly
@@ -148,6 +150,10 @@ export const ComboboxInputInternal = forwardRef(function ComboboxInput(
   // If they are controlling the value we still need to do our transitions, so
   // we have this derived state to emulate onChange of the input as we receive
   // new `value`s ...[*]
+
+  // Need to determine whether the updated value come from change event on the input
+  // or from a new value prop (controlled)
+  const isInputting = useRef(false)
   if (
     controlledValue !== undefined &&
     contextInputValue &&
@@ -169,13 +175,14 @@ export const ComboboxInputInternal = forwardRef(function ComboboxInput(
   // types, instead the developer controls it with the normal input onChange
   // prop
   function handleChange(event: FormEvent<HTMLInputElement>) {
-    isInputting.current = true
     if (!isControlled) {
       handleValueChange(event.currentTarget.value)
+    } else {
+      isInputting.current = true
+      requestAnimationFrame(() => {
+        isInputting.current = false
+      })
     }
-    requestAnimationFrame(() => {
-      isInputting.current = false
-    })
   }
 
   function handleFocus() {
@@ -233,30 +240,50 @@ export const ComboboxInputInternal = forwardRef(function ComboboxInput(
   const wrappedOnMouseDown = useWrapEvent(handleMouseDown, onMouseDown)
   const wrappedOnBlur = useWrapEvent(handleBlur, onBlur)
   const wrappedOnFocus = useWrapEvent(handleFocus, onFocus)
-  const wrappedOnChange = useWrapEvent(handleChange, onChange)
+  const wrappedOnOInputChange = useWrapEvent(handleChange, onInputChange)
   const wrappedOnKeyDown = useWrapEvent(handleKeyDown, onKeyDown)
+
+  return [
+    {
+      ...props,
+      'aria-activedescendant': navigationOption
+        ? String(makeHash(navigationOption ? navigationOption.value : ''))
+        : undefined,
+      id: listboxId,
+      inputValue,
+      onBlur: wrappedOnBlur,
+      onClear: wrappedOnClear,
+      onClick: wrappedOnClick,
+      onFocus: wrappedOnFocus,
+      onInputChange: wrappedOnOInputChange,
+      onKeyDown: wrappedOnKeyDown,
+      onMouseDown: wrappedOnMouseDown,
+      readOnly: readOnly,
+    },
+    ref,
+  ]
+}
+
+export const ComboboxInputInternal = forwardRef(function ComboboxInput(
+  { onChange, value, ...props }: ComboboxInputProps,
+  forwardedRef: Ref<HTMLInputElement>
+) {
+  const [
+    { inputValue, onInputChange, ...comboboxInputProps },
+    ref,
+  ] = useComboboxInput(
+    { inputValue: value, onInputChange: onChange, ...props },
+    forwardedRef
+  )
 
   return (
     <InputSearch
-      {...props}
-      ref={ref}
+      {...comboboxInputProps}
       value={inputValue}
-      readOnly={readOnly}
-      onClick={wrappedOnClick}
-      onMouseDown={wrappedOnMouseDown}
-      onClear={wrappedOnClear}
-      onBlur={wrappedOnBlur}
-      onFocus={wrappedOnFocus}
-      onChange={wrappedOnChange}
-      onKeyDown={wrappedOnKeyDown}
-      id={listboxId}
+      onChange={onInputChange}
       autoComplete="off"
       aria-autocomplete="both"
-      aria-activedescendant={
-        navigationOption
-          ? String(makeHash(navigationOption ? navigationOption.value : ''))
-          : undefined
-      }
+      ref={ref}
     />
   )
 })
