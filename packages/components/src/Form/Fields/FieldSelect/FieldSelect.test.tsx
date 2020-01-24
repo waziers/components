@@ -24,121 +24,52 @@
 
  */
 
-import { mount, render } from 'enzyme'
 import React from 'react'
-import { ThemeProvider } from 'styled-components'
 
-import {
-  createWithTheme,
-  renderWithTheme,
-  assertSnapshot,
-} from '@looker/components-test-utils'
+import { fireEvent } from '@testing-library/react'
+import { renderWithTheme } from '@looker/components-test-utils'
 
-import { theme } from '@looker/design-tokens'
 import { FieldSelect } from './FieldSelect'
 
 test('A FieldSelect', () => {
-  assertSnapshot(<FieldSelect label="👍" name="thumbsUp" id="thumbs-up" />)
+  const { getByLabelText, getByText, queryByRole } = renderWithTheme(
+    <FieldSelect label="👍" name="thumbsUp" id="thumbs-up" />
+  )
+  expect(getByLabelText('👍')).toBeVisible()
+  expect(getByText('👍')).toBeVisible()
+  expect(queryByRole('listbox')).not.toBeInTheDocument()
 })
 
-test('FieldSelect supports labelWeight', () => {
-  assertSnapshot(
+test('Should accept a value', () => {
+  const { getByLabelText } = renderWithTheme(
     <FieldSelect
       label="👍"
       name="thumbsUp"
       id="thumbs-up"
-      labelFontWeight="normal"
+      value="foobar"
+      options={[{ label: 'Foobar', value: 'foobar' }]}
     />
   )
-})
 
-test('Should accept a value', () => {
-  const wrapper = render(
-    <ThemeProvider theme={theme}>
-      <FieldSelect
-        label="👍"
-        name="thumbsUp"
-        id="thumbs-up"
-        value="foobar"
-        options={[{ label: 'Foobar', value: 'foobar' }]}
-      />
-    </ThemeProvider>
-  )
-
-  const input = wrapper.find('input')
-  expect(input.prop('value')).toEqual('Foobar')
+  const input = getByLabelText('👍')
+  expect(input).toHaveValue('Foobar')
 })
 
 test('Should trigger onChange handler', () => {
   const handleChange = jest.fn()
 
-  const wrapper = mount(
-    <ThemeProvider theme={theme}>
-      <FieldSelect
-        label="👍"
-        name="thumbsUp"
-        id="thumbs-up"
-        value="foobar"
-        onChange={handleChange}
-        options={[{ label: 'Foobar', value: 'foobar' }]}
-      />
-    </ThemeProvider>
-  )
-
-  wrapper.find('input').simulate('mousedown')
-  wrapper
-    .find('li')
-    .at(0)
-    .simulate('click')
-  expect(handleChange).toHaveBeenCalledTimes(1)
-})
-
-test('A required FieldSelect', () => {
-  const component = createWithTheme(
-    <FieldSelect label="👍" name="thumbsUp" id="thumbs-up" required />
-  )
-  const tree = component.toJSON()
-  expect(tree).toMatchSnapshot()
-})
-
-test('A FieldSelect with an error validation aligned to the bottom', () => {
   const { getByLabelText, getByText } = renderWithTheme(
     <FieldSelect
-      label="thumbs up"
-      name="thumbsUp"
-      id="thumbs-up"
-      validationMessage={{ message: 'This is an error', type: 'error' }}
-      alignValidationMessage="bottom"
-    />
-  )
-  expect(getByLabelText('thumbs up')).toBeVisible()
-  expect(getByText('This is an error')).toBeVisible()
-})
-
-test('A FieldSelect with an error validation aligned to the left', () => {
-  const component = createWithTheme(
-    <FieldSelect
       label="👍"
       name="thumbsUp"
       id="thumbs-up"
-      validationMessage={{ message: 'This is an error', type: 'error' }}
-      alignValidationMessage="left"
+      value="foobar"
+      onChange={handleChange}
+      options={[{ label: 'Foobar', value: 'foobar' }]}
     />
   )
-  const tree = component.toJSON()
-  expect(tree).toMatchSnapshot()
-})
 
-test('A FieldSelect with an error validation aligned to the right', () => {
-  const component = createWithTheme(
-    <FieldSelect
-      label="👍"
-      name="thumbsUp"
-      id="thumbs-up"
-      validationMessage={{ message: 'This is an error', type: 'error' }}
-      alignValidationMessage="right"
-    />
-  )
-  const tree = component.toJSON()
-  expect(tree).toMatchSnapshot()
+  fireEvent.mouseDown(getByLabelText('👍'))
+  fireEvent.click(getByText('Foobar'))
+  expect(handleChange).toHaveBeenCalledTimes(1)
 })

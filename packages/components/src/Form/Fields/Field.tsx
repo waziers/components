@@ -75,6 +75,10 @@ export interface FieldProps {
    */
   label?: string
   /**
+   * id attribute for the label element
+   */
+  labelID?: string
+  /**
    * Specifies for horizontally aligned labels how much space to take up.
    */
   labelWidth?: ResponsiveSpaceValue
@@ -105,6 +109,7 @@ export const fieldPropKeys = [
   'label',
   'labelFontSize',
   'labelFontWeight',
+  'labelID',
   'labelWidth',
   'validationMessage',
 ]
@@ -174,13 +179,20 @@ const FieldComponent: FunctionComponent<FieldProps> = ({
   label,
   labelFontSize,
   labelFontWeight,
+  // labelID is for when aria-labelledby is used in place of htmlFor
+  labelID,
   required,
   validationMessage,
   ...props
 }) => {
   return (
     <FormControl mb="xsmall" {...props}>
-      <Label htmlFor={id} fontWeight={labelFontWeight} fontSize={labelFontSize}>
+      <Label
+        id={labelID}
+        htmlFor={id}
+        fontWeight={labelFontWeight}
+        fontSize={labelFontSize}
+      >
         {label}
         {required && <RequiredStar />}
       </Label>

@@ -95,10 +95,10 @@ describe('Keyboard navigation', () => {
       getAllByRole,
       getByRole,
       queryByRole,
-      getByTestId,
+      getByPlaceholderText,
     } = renderWithTheme(
       <Combobox id="with-options" openOnFocus>
-        <ComboboxInput data-testid="select-input" />
+        <ComboboxInput placeholder="Search" />
         <ComboboxList>
           <ComboboxOption label="Foo" value="101" />
           <ComboboxOption label="Bar" value="102" />
@@ -108,7 +108,7 @@ describe('Keyboard navigation', () => {
 
     expect(queryByRole('listbox')).not.toBeInTheDocument()
 
-    const input = getByTestId('select-input')
+    const input = getByPlaceholderText('Search')
 
     fireEvent.keyDown(input, arrowDown)
     expect(getByRole('listbox')).toBeInTheDocument()
@@ -148,10 +148,10 @@ describe('Keyboard navigation', () => {
       getAllByRole,
       getByRole,
       queryByRole,
-      getByTestId,
+      getByPlaceholderText,
     } = renderWithTheme(
       <Combobox id="with-options" openOnFocus>
-        <ComboboxInput data-testid="select-input" autoComplete={false} />
+        <ComboboxInput placeholder="Search" autoComplete={false} />
         <ComboboxList>
           <ComboboxOption label="Foo" value="101" />
           <ComboboxOption label="Bar" value="102" />
@@ -161,7 +161,7 @@ describe('Keyboard navigation', () => {
 
     expect(queryByRole('listbox')).not.toBeInTheDocument()
 
-    const input = getByTestId('select-input')
+    const input = getByPlaceholderText('Search')
 
     fireEvent.keyDown(input, arrowDown)
     expect(getByRole('listbox')).toBeInTheDocument()

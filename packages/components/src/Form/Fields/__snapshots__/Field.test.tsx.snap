@@ -1,0 +1,274 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`A Field with an error validation aligned to the bottom 1`] = `
+.c0 {
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c1 {
+  color: #343C42;
+  margin-right: 0.5rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  display: inline-block;
+}
+
+.c2 {
+  color: #CC1F36;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+
+<div>
+  <div
+    class="c0 "
+    name="thumbsUp"
+  >
+    <label
+      class="c1"
+      color="palette.charcoal700"
+      font-size="xsmall"
+      font-weight="semiBold"
+      for="thumbs-up"
+    >
+      👍
+    </label>
+    <div
+      class="c0"
+    >
+      <div
+        class=""
+      >
+        <input
+          id="thumbs-up"
+        />
+      </div>
+      <div
+        class="c2"
+        font-size="xsmall"
+        type="error"
+      >
+        This is an error
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`A Field with an error validation aligned to the left 1`] = `
+.c0 {
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c2 {
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row-reverse;
+  -ms-flex-direction: row-reverse;
+  flex-direction: row-reverse;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  -webkit-align-items: baseline;
+  -webkit-box-align: baseline;
+  -ms-flex-align: baseline;
+  align-items: baseline;
+}
+
+.c1 {
+  color: #343C42;
+  margin-right: 0.5rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  display: inline-block;
+}
+
+.c3 {
+  color: #CC1F36;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+
+<div>
+  <div
+    class="c0 "
+    name="thumbsUp"
+  >
+    <label
+      class="c1"
+      color="palette.charcoal700"
+      font-size="xsmall"
+      font-weight="semiBold"
+      for="thumbs-up"
+    >
+      👍
+    </label>
+    <div
+      class="c2"
+    >
+      <div
+        class=""
+      >
+        <input
+          id="thumbs-up"
+        />
+      </div>
+      <div
+        class="c3"
+        font-size="xsmall"
+        type="error"
+      >
+        This is an error
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`A Field with an error validation aligned to the right 1`] = `
+.c0 {
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c2 {
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: baseline;
+  -webkit-box-align: baseline;
+  -ms-flex-align: baseline;
+  align-items: baseline;
+}
+
+.c1 {
+  color: #343C42;
+  margin-right: 0.5rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  display: inline-block;
+}
+
+.c3 {
+  color: #CC1F36;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+}
+
+<div>
+  <div
+    class="c0 "
+    name="thumbsUp"
+  >
+    <label
+      class="c1"
+      color="palette.charcoal700"
+      font-size="xsmall"
+      font-weight="semiBold"
+      for="thumbs-up"
+    >
+      👍
+    </label>
+    <div
+      class="c2"
+    >
+      <div
+        class=""
+      >
+        <input
+          id="thumbs-up"
+        />
+      </div>
+      <div
+        class="c3"
+        font-size="xsmall"
+        type="error"
+      >
+        This is an error
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Field supports labelWeight 1`] = `
+.c0 {
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c1 {
+  color: #343C42;
+  margin-right: 0.5rem;
+  font-weight: 400;
+  font-size: 0.75rem;
+  display: inline-block;
+}
+
+<div>
+  <div
+    class="c0 "
+    name="thumbsUp"
+  >
+    <label
+      class="c1"
+      color="palette.charcoal700"
+      font-size="xsmall"
+      font-weight="normal"
+      for="thumbs-up"
+    >
+      👍
+    </label>
+    <div
+      class="c0"
+    >
+      <div
+        class=""
+      >
+        <input
+          id="thumbs-up"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

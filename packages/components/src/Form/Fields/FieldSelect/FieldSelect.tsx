@@ -36,18 +36,20 @@ export interface FieldSelectProps extends FieldProps, SelectProps {}
 const FieldSelectComponent = forwardRef(
   (props: FieldSelectProps, ref: Ref<HTMLInputElement>) => {
     const validationMessage = useFormContext(props)
-    const { id = uuid() } = props
+    const { id = uuid(), labelID = `label-${id}`, ...rest } = props
     return (
       <Field
-        id={id}
+        id={`listbox-${id}`}
+        labelID={labelID}
         alignValidationMessage="bottom"
         validationMessage={validationMessage}
-        {...pickFieldProps(props)}
+        {...pickFieldProps(rest)}
       >
         <Select
           {...omitFieldProps(props)}
           id={id}
           validationType={validationMessage && validationMessage.type}
+          aria-labelledby={labelID}
           ref={ref}
         />
       </Field>
