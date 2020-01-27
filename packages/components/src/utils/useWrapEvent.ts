@@ -26,14 +26,14 @@
 
 import { SyntheticEvent, useCallback } from 'react'
 
-export function useWrapEvent<E extends SyntheticEvent>(
+export function useWrapEvent<E extends SyntheticEvent | string>(
   ourHandler: (e: E) => void,
   theirHandler?: (e: E) => void
 ) {
   return useCallback(
     (event: E) => {
       theirHandler && theirHandler(event)
-      if (!event.defaultPrevented) {
+      if (!(event as SyntheticEvent).defaultPrevented) {
         return ourHandler(event)
       }
     },

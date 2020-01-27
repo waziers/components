@@ -37,17 +37,17 @@ import React, {
   Ref,
 } from 'react'
 import ReactDOMServer from 'react-dom/server'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useForkedRef, useWrapEvent } from '../../../utils'
 import { InputSearch, InputSearchProps } from '../InputSearch'
+import { InputChips, InputChipsProps } from '../InputChips'
 import { InputText } from '../InputText'
 import { makeHash, useBlur, useKeyDown } from './helpers'
 import { ComboboxContext } from './ComboboxContext'
 import { getComboboxText } from './ComboboxOption'
 import { ComboboxActionType, ComboboxState } from './state'
 
-export interface ComboboxInputProps
-  extends Omit<InputSearchProps, 'autoComplete'> {
+export interface ComboboxSpecificInputProps {
   /**
    * If true, when the user clicks inside the text box the current value will
    * be selected. Use this if the user is likely to delete all the text anyway
@@ -71,13 +71,24 @@ export interface ComboboxInputProps
   autoComplete?: boolean
 }
 
-export interface UseComboboxInputProps
-  extends Omit<ComboboxInputProps, 'value' | 'onChange'> {
+export interface ComboboxInputProps
+  extends ComboboxSpecificInputProps,
+    Omit<InputSearchProps, 'autoComplete'> {}
+
+export interface ComboboxInputChipsProps
+  extends ComboboxSpecificInputProps,
+    Omit<InputChipsProps, 'autoComplete'> {}
+
+type InputChangeHandler<T> = (e: T) => void
+
+export interface UseComboboxInputProps<
+  T extends string | FormEvent<HTMLInputElement>
+> extends Omit<ComboboxInputProps, 'value' | 'onChange'> {
   inputValue?: string
-  onInputChange?: (e: FormEvent<HTMLInputElement>) => void
+  onInputChange?: InputChangeHandler<T>
 }
 
-function useComboboxInput(
+function useComboboxInput<T extends string | FormEvent<HTMLInputElement>>(
   {
     // highlights all the text in the box on click when true
     selectOnClick = false,
@@ -98,9 +109,12 @@ function useComboboxInput(
     // might be controlled
     inputValue: controlledValue,
     ...props
-  }: UseComboboxInputProps,
+  }: UseComboboxInputProps<T>,
   forwardedRef: Ref<HTMLInputElement>
-): [UseComboboxInputProps, Ref<HTMLInputElement>] {
+): [
+  Omit<UseComboboxInputProps<T>, 'autoComplete' | 'selectOnClick'>,
+  Ref<HTMLInputElement>
+] {
   const {
     data: {
       navigationOption,
@@ -174,9 +188,13 @@ function useComboboxInput(
   // [*]... and when controlled, we don't trigger handleValueChange as the user
   // types, instead the developer controls it with the normal input onChange
   // prop
-  function handleChange(event: FormEvent<HTMLInputElement>) {
+  function handleChange(value: T) {
     if (!isControlled) {
-      handleValueChange(event.currentTarget.value)
+      const newValue =
+        typeof value === 'string'
+          ? value
+          : (value as FormEvent<HTMLInputElement>).currentTarget.value
+      handleValueChange(newValue)
     } else {
       isInputting.current = true
       requestAnimationFrame(() => {
@@ -240,7 +258,10 @@ function useComboboxInput(
   const wrappedOnMouseDown = useWrapEvent(handleMouseDown, onMouseDown)
   const wrappedOnBlur = useWrapEvent(handleBlur, onBlur)
   const wrappedOnFocus = useWrapEvent(handleFocus, onFocus)
-  const wrappedOnOInputChange = useWrapEvent(handleChange, onInputChange)
+  const wrappedOnOInputChange = useWrapEvent(
+    handleChange as InputChangeHandler<T>,
+    onInputChange as InputChangeHandler<T>
+  )
   const wrappedOnKeyDown = useWrapEvent(handleKeyDown, onKeyDown)
 
   return [
@@ -290,6 +311,36 @@ export const ComboboxInputInternal = forwardRef(function ComboboxInput(
 
 ComboboxInputInternal.displayName = 'ComboboxInputInternal'
 
+export const ComboboxInputChipsInternal = forwardRef(function ComboboxInput(
+  {
+    values,
+    onChange,
+    onDuplicate,
+    onInvalid,
+    validate,
+    ...props
+  }: ComboboxInputChipsProps,
+  forwardedRef: Ref<HTMLInputElement>
+) {
+  const [comboboxInputProps, ref] = useComboboxInput(props, forwardedRef)
+
+  return (
+    <InputChips
+      {...comboboxInputProps}
+      values={values}
+      onChange={onChange}
+      onDuplicate={onDuplicate}
+      onInvalid={onInvalid}
+      validate={validate}
+      autoComplete="off"
+      aria-autocomplete="both"
+      ref={ref}
+    />
+  )
+})
+
+ComboboxInputChipsInternal.displayName = 'ComboboxInputChipsInternal'
+
 const indicatorRaw = ReactDOMServer.renderToString(<CaretDown />)
   .replace(/1em/g, '24')
   .replace('data-reactroot=""', 'xmlns="http://www.w3.org/2000/svg"')
@@ -302,7 +353,7 @@ export const selectIndicatorBG = (color: string) =>
     indicatorRaw.replace('currentColor', color)
   )}')`
 
-export const ComboboxInput = styled(ComboboxInputInternal)`
+const comboboxInputStyles = css<InputSearchProps>`
   background-image: ${props => {
     const color = props.disabled
       ? props.theme.colors.palette.charcoal300
@@ -319,6 +370,17 @@ export const ComboboxInput = styled(ComboboxInputInternal)`
   }
 `
 
+export const ComboboxInput = styled(ComboboxInputInternal)`
+  ${comboboxInputStyles}
+`
+export const ComboboxInputChips = styled(ComboboxInputChipsInternal)`
+  ${comboboxInputStyles}
+`
+
 ComboboxInput.defaultProps = {
+  width: '100%',
+}
+
+ComboboxInputChips.defaultProps = {
   width: '100%',
 }
