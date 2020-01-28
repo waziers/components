@@ -1,11 +1,10 @@
 import React, { FC } from 'react'
-import DayPicker from 'react-day-picker'
-import 'react-day-picker/lib/style.css'
+import { Calendar } from '../../../Calendar'
 
 interface InputDateProps {
   prop?: any
 }
 
 export const InputDate: FC<InputDateProps> = () => {
-  return <DayPicker />
+  return <Calendar />
 }
