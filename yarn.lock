@@ -55,7 +55,7 @@
     semver "^5.4.1"
     source-map "^0.5.0"
 
-"@babel/core@>=7.2.2", "@babel/core@^7.1.0", "@babel/core@^7.7.5", "@babel/core@^7.8.4":
+"@babel/core@>=7.2.2", "@babel/core@^7.1.0", "@babel/core@^7.4.5", "@babel/core@^7.7.5", "@babel/core@^7.8.4":
   version "7.8.4"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.8.4.tgz#d496799e5c12195b3602d0fddd77294e3e38e80e"
   integrity sha512-0LiLrB2PwrVI+a2/IEskBopDYSd8BCb3rOvH7D5tzoWd696TBEduBvuLVm4Nx6rltrLZqvI3MCalB2K2aVzQjA==
@@ -4108,6 +4108,15 @@ babel-plugin-extract-import-names@^1.5.5:
   integrity sha512-F9paxnUtO3vddyOX+vbRa8KrkuovJIFB8KmB/dEICqTUm2331LcGbjCKzZApOri4Igbk9MnYybm2fDsuPJC3vA==
   dependencies:
     "@babel/helper-plugin-utils" "7.8.0"
+
+babel-plugin-i18next-extract@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-i18next-extract/-/babel-plugin-i18next-extract-0.6.1.tgz#ce8570dcee116b7740a90a093da30b57b0cc1dc9"
+  integrity sha512-cvFZG6GaS53BaC3ILuY2sHV4bx2FoJrcLzqU3hNQodc3PnEFKv+EFj84C2+7ES7jSsFPwsCPBmALlIygLWyh4w==
+  dependencies:
+    "@babel/core" "^7.4.5"
+    i18next "^19.0.0"
+    json-stable-stringify "^1.0.1"
 
 babel-plugin-istanbul@^6.0.0:
   version "6.0.0"
@@ -9949,7 +9958,7 @@ humanize-url@^1.0.0:
     normalize-url "^1.0.0"
     strip-url-auth "^1.0.0"
 
-i18next@^19.1.0:
+i18next@^19.0.0, i18next@^19.1.0:
   version "19.1.0"
   resolved "https://registry.yarnpkg.com/i18next/-/i18next-19.1.0.tgz#fe1a1da3d208872946307c7d2d115da45d46159f"
   integrity sha512-ISbmukX4L6Dz0QoH9+EW1AnBw7j+NRLoMu9uLPMaNSSTP9Eie9/oUL0dOyWX15baB3gYOpkHJpGZRHOqcnl0ew==
@@ -11539,6 +11548,13 @@ json-stable-stringify-without-jsonify@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
   integrity sha1-nbe1lJatPzz+8wp1FC0tkwrXJlE=
+
+json-stable-stringify@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/json-stable-stringify/-/json-stable-stringify-1.0.1.tgz#9a759d39c5f2ff503fd5300646ed445f88c4f9af"
+  integrity sha1-mnWdOcXy/1A/1TAGRu1EX4jE+a8=
+  dependencies:
+    jsonify "~0.0.0"
 
 json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
   version "5.0.1"

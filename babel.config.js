@@ -43,23 +43,13 @@ module.exports = api => {
     },
     ignore: ['node_modules'],
     plugins: [
+      'i18next-extract',
       '@babel/plugin-proposal-class-properties',
       '@babel/plugin-proposal-object-rest-spread',
       '@babel/plugin-transform-runtime',
       'babel-plugin-styled-components',
     ],
     presets: [
-      // [
-      //   '@babel/env',
-      //   {
-      //     corejs: 3,
-      //     targets: {
-      //       browsers: 'Last 2 Chrome versions, Firefox ESR, IE 11',
-      //       node: 'current',
-      //     },
-      //     useBuiltIns: 'usage',
-      //   },
-      // ],
       [
         '@babel/preset-react',
         {

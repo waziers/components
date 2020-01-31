@@ -36,17 +36,13 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <Box maxWidth="20rem" p="xlarge">
-        <ButtonToggle
-          value={language}
-          onChange={handleLanguageChange}
-          mb="large"
-        >
+        <ButtonToggle value={language} onChange={handleLanguageChange}>
           <ButtonItem value="en">English</ButtonItem>
           <ButtonItem value="es">Spanish</ButtonItem>
           <ButtonItem value="pr">Portuguese</ButtonItem>
         </ButtonToggle>
 
-        <InputSearch />
+        <InputSearch mt="xlarge" />
       </Box>
     </ThemeProvider>
   )
