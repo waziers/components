@@ -18,43 +18,21 @@
  SOFTWARE.
  */
 
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Checkbox,
   Label,
   List,
   ListItem,
-  MixedBoolean,
-  CheckboxTree,
   useMixedStateCheckbox,
 } from '@looker/components'
 
 /* eslint-disable sort-keys */
 export const MixedStateCheckboxDemo = () => {
-  // Set up local state and child change handlers
-  const [parentState, setParentState] = useState<MixedBoolean>(false)
-  const [appleState, setAppleState] = useState<MixedBoolean>(false)
-  const [bananaState, setBananaState] = useState<MixedBoolean>(false)
-  const [avocadoState, setAvocadoState] = useState<MixedBoolean>(false)
-  const handleAppleChange = () => setAppleState(!appleState)
-  const handleBananaChange = () => setBananaState(!bananaState)
-  const handleAvocadoChange = () => setAvocadoState(!avocadoState)
-
-  // Establish checkbox hierarchy for use in custom hook
-  const fruitTree: CheckboxTree = {
-    parent: {
-      setState: setParentState,
-      state: parentState,
-    },
-    children: [
-      { setState: setAppleState, state: appleState },
-      { setState: setBananaState, state: bananaState },
-      { setState: setAvocadoState, state: avocadoState },
-    ],
-  }
-
-  // Sync parent/child states and get provided parent change handler
-  const handleParentChange = useMixedStateCheckbox(fruitTree)
+  const { parent, children } = useMixedStateCheckbox({
+    parent: false,
+    children: [false, false, false],
+  })
 
   return (
     <>
@@ -64,8 +42,7 @@ export const MixedStateCheckboxDemo = () => {
             id="fruit-parent"
             name="fruit"
             value="all-fruit"
-            onChange={handleParentChange}
-            checked={parentState}
+            {...parent}
           />
           <Label htmlFor="fruit-parent" fontSize="medium">
             Fruit
@@ -78,8 +55,7 @@ export const MixedStateCheckboxDemo = () => {
                 id="fruit-apple"
                 name="fruit"
                 value="apple"
-                onChange={handleAppleChange}
-                checked={appleState}
+                {...children[0]}
               />
               <Label htmlFor="fruit-apple" fontSize="large">
                 🍏
@@ -90,8 +66,7 @@ export const MixedStateCheckboxDemo = () => {
                 id="fruit-banana"
                 name="fruit"
                 value="apple"
-                onChange={handleBananaChange}
-                checked={bananaState}
+                {...children[1]}
               />
               <Label htmlFor="fruit-banana" fontSize="large">
                 🍌
@@ -102,8 +77,7 @@ export const MixedStateCheckboxDemo = () => {
                 id="fruit-avocado"
                 name="fruit"
                 value="apple"
-                onChange={handleAvocadoChange}
-                checked={avocadoState}
+                {...children[2]}
               />
               <Label htmlFor="fruit-avocado" fontSize="large">
                 🥑
