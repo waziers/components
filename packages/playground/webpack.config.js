@@ -42,7 +42,7 @@ module.exports = {
     app: PATHS.app,
   },
   output: {
-    path: __dirname + '/dist',
+    path: __dirname + '/lib',
     filename: 'index_bundle.js',
   },
   plugins: [new HtmlWebpackPlugin({ template: 'src/template.html' })],

@@ -23,7 +23,7 @@
     "build:es": "yarn lerna run 'build:es'",
     "build:declarations": "yarn lerna run 'build:declaration'",
     "postbuild": "yarn build:declarations && run-p -c 'lint'",
-    "clean": "rm -rf packages/*/dist",
+    "clean": "rm -rf packages/*/lib",
     "develop": "yarn build:es && run-p -c develop:*",
     "develop:components": "yarn workspace @looker/components develop &",
     "develop:playground": "yarn workspace playground develop",

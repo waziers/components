@@ -2,10 +2,10 @@
   "name": "@looker/icons",
   "license": "MIT",
   "version": "0.7.15",
-  "main": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
-    "dist"
+    "lib"
   ],
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build:declaration": "tsc --project tsconfig.build.json",
-    "build:es": "yarn build:icons && BABEL_ENV=build babel src --root-mode upward --out-dir dist/esm --source-maps --extensions .js,.jsx,.ts,.tsx --delete-dir-on-start --no-comments",
+    "build:es": "yarn build:icons && BABEL_ENV=build babel src --root-mode upward --out-dir lib --source-maps --extensions .js,.jsx,.ts,.tsx --delete-dir-on-start --no-comments",
     "build:icons": "node bin/build.js",
     "develop": "yarn build:es --watch --verbose & yarn declaration --watch"
   },

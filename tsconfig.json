@@ -13,5 +13,5 @@
     ]
   },
   "include": ["packages"],
-  "exclude": ["dist"]
+  "exclude": ["lib"]
 }
