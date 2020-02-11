@@ -49,17 +49,6 @@ module.exports = api => {
       'babel-plugin-styled-components',
     ],
     presets: [
-      // [
-      //   '@babel/env',
-      //   {
-      //     corejs: 3,
-      //     targets: {
-      //       browsers: 'Last 2 Chrome versions, Firefox ESR, IE 11',
-      //       node: 'current',
-      //     },
-      //     useBuiltIns: 'usage',
-      //   },
-      // ],
       [
         '@babel/preset-react',
         {

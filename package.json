@@ -41,7 +41,6 @@
     "npmrc:clean": "rm .npmrc",
     "prepare": "yarn build",
     "prepublishOnly": "yarn test",
-    "sleep": "sleep 10",
     "test": "yarn jest"
   },
   "devDependencies": {
