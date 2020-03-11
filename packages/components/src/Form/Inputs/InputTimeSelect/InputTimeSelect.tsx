@@ -4,6 +4,7 @@ import map from 'lodash/map'
 import padStart from 'lodash/padStart'
 import toString from 'lodash/toString'
 import isFunction from 'lodash/isFunction'
+import find from 'lodash/find'
 import { BorderProps, SpaceProps } from '@looker/design-tokens'
 import {
   Combobox,
@@ -75,6 +76,30 @@ const generateTimes = (format: formats, interval: intervals) => {
   )
 }
 
+const matchValueToOption = (
+  options: ComboboxOptionObject[],
+  format: formats,
+  value?: string
+) => {
+  if (value) {
+    const option = find(options, { value: value })
+
+    if (option) {
+      return option
+    } else {
+      const [hour, minute] = value.split(':')
+      const formattedHour = formatTimeString(
+        cycleHourDisplay(format, parseInt(hour))
+      )
+      const formatLabel =
+        format === '12h' && (parseInt(hour) < 12 ? 'am' : 'pm')
+
+      return { label: `${formattedHour}:${minute} ${formatLabel || ''}`, value }
+    }
+  }
+  return undefined
+}
+
 export const InputTimeSelect: FC<InputTimeSelectProps> = ({
   interval = 15,
   format = '12h',
@@ -82,9 +107,11 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
   value: propValue,
   defaultValue,
 }) => {
-  const [value, setValue] = useState<MaybeComboboxOptionObject>({
-    value: propValue || defaultValue || '',
-  })
+  const timeOptions = generateTimes(format, interval)
+
+  const [value, setValue] = useState<MaybeComboboxOptionObject>(
+    matchValueToOption(timeOptions, format, propValue || defaultValue)
+  )
 
   const handleChange: ComboboxCallback<MaybeComboboxOptionObject> = (
     newVal: MaybeComboboxOptionObject
@@ -94,8 +121,6 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
       onChange(newVal && newVal.value)
     }
   }
-
-  const timeOptions = generateTimes(format, interval)
 
   return (
     <Combobox value={value} onChange={handleChange}>
