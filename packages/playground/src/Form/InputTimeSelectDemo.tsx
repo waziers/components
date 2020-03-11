@@ -1,12 +1,13 @@
 import React, { FC, useState } from 'react'
+import partial from 'lodash/partial'
 import styled from 'styled-components'
 import { Button, Box, InputTimeSelect, Heading } from '@looker/components'
 
 export const InputTimeSelectDemo: FC = () => {
   const [basicTime, setBasicTime] = useState<string | undefined>()
   const [controlledTime, setControlledTime] = useState<any>()
-  const handleControlledTimeClick = () => {
-    setControlledTime('')
+  const handleControlledTimeClick = (value: string) => {
+    setControlledTime(value)
   }
   return (
     <DemoWrapper>
@@ -21,34 +22,45 @@ export const InputTimeSelectDemo: FC = () => {
         <HeadingGrid>
           <Heading as="h1">Controlled Component</Heading>
         </HeadingGrid>
-        <Button mr="small" onClick={handleControlledTimeClick}>
+        <Button
+          mr="small"
+          onClick={partial(handleControlledTimeClick, '11:05')}
+        >
           11:05am
         </Button>
-        <Button mr="small" onClick={handleControlledTimeClick}>
+        <Button
+          mr="small"
+          onClick={partial(handleControlledTimeClick, '14:00')}
+        >
           2:00pm
         </Button>
-        <Button mr="small" onClick={handleControlledTimeClick}>
+        <Button
+          mr="small"
+          onClick={partial(handleControlledTimeClick, '15:15')}
+        >
           3:15pm
         </Button>
-        <Button mr="small" onClick={handleControlledTimeClick}>
+        <Button
+          mr="small"
+          onClick={partial(handleControlledTimeClick, '16:30')}
+        >
           4:30pm
         </Button>
         <Box mt="large">
-          <InputTimeSelect value={controlledTime} />
+          <InputTimeSelect
+            value={controlledTime}
+            onChange={setControlledTime}
+          />
+          <InputTimeSelect
+            value={controlledTime}
+            onChange={setControlledTime}
+            format="24h"
+          />
         </Box>
       </div>
       <div>
         <HeadingGrid>
-          <Heading as="h1">24 Hour Time</Heading>
-          <SelectedDateWrapper>Selected:</SelectedDateWrapper>
-        </HeadingGrid>
-        <div>
-          <InputTimeSelect format="24h" />
-        </div>
-      </div>
-      <div>
-        <HeadingGrid>
-          <Heading as="h1">Alternate Intervals</Heading>
+          <Heading as="h1">Intervals</Heading>
         </HeadingGrid>
         <div>
           <Heading as="h2" mt="large">
@@ -74,6 +86,8 @@ export const InputTimeSelectDemo: FC = () => {
           <Heading as="h1">defaultValue</Heading>
         </HeadingGrid>
         <InputTimeSelect defaultValue="10:30" />
+        <InputTimeSelect defaultValue="17:30" />
+        <InputTimeSelect defaultValue="17:30" format="24h" />
       </div>
     </DemoWrapper>
   )
