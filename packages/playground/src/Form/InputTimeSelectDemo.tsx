@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Button, Box, InputTimeSelect, Heading } from '@looker/components'
 
 export const InputTimeSelectDemo: FC = () => {
+  const [basicTime, setBasicTime] = useState<string | undefined>()
   const [controlledTime, setControlledTime] = useState<any>()
   const handleControlledTimeClick = () => {
     setControlledTime('')
@@ -12,14 +13,17 @@ export const InputTimeSelectDemo: FC = () => {
       <div>
         <HeadingGrid>
           <Heading as="h1">Basic Input</Heading>
-          <SelectedDateWrapper>Selected:</SelectedDateWrapper>
+          <SelectedDateWrapper>Selected: {basicTime}</SelectedDateWrapper>
         </HeadingGrid>
-        <InputTimeSelect m="small" />
+        <InputTimeSelect m="small" onChange={setBasicTime} />
       </div>
       <div>
         <HeadingGrid>
           <Heading as="h1">Controlled Component</Heading>
         </HeadingGrid>
+        <Button mr="small" onClick={handleControlledTimeClick}>
+          11:05am
+        </Button>
         <Button mr="small" onClick={handleControlledTimeClick}>
           2:00pm
         </Button>
@@ -69,7 +73,7 @@ export const InputTimeSelectDemo: FC = () => {
         <HeadingGrid>
           <Heading as="h1">defaultValue</Heading>
         </HeadingGrid>
-        <InputTimeSelect />
+        <InputTimeSelect defaultValue="10:30" />
       </div>
     </DemoWrapper>
   )
