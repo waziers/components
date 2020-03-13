@@ -5,7 +5,7 @@ import { Button, Box, InputTimeSelect, Heading } from '@looker/components'
 
 export const InputTimeSelectDemo: FC = () => {
   const [basicTime, setBasicTime] = useState<string | undefined>()
-  const [controlledTime, setControlledTime] = useState<any>()
+  const [controlledTime, setControlledTime] = useState<any>('09:00')
   const handleControlledTimeClick = (value: string) => {
     setControlledTime(value)
   }

@@ -184,10 +184,12 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
 
   const [selectedOption, setSelectedOption] = useState<
     MaybeComboboxOptionObject
-  >(matchStringValueToOption(timeOptions, format, value || defaultValue))
+  >()
 
   useEffect(() => {
-    setSelectedOption(matchStringValueToOption(timeOptions, format, value))
+    setSelectedOption(
+      matchStringValueToOption(timeOptions, format, value || defaultValue)
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
@@ -209,9 +211,9 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
 
   return (
     <InputTimeSelectWrapper>
-      <Combobox value={selectedOption} onChange={handleChange} openOnFocus>
+      <Combobox value={selectedOption} onChange={handleChange}>
         <ComboboxInput placeholder="Select time" />
-        <ComboboxList>
+        <ComboboxList persistSelection>
           {timeOptionsFocused.map((option, index) => (
             <ComboboxOption {...option} key={index} />
           ))}
