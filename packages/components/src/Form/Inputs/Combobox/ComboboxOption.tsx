@@ -42,10 +42,11 @@ import {
   TypographyProps,
 } from '@looker/design-tokens'
 import omit from 'lodash/omit'
-import React, { forwardRef, useContext, Ref } from 'react'
+import React, { forwardRef, useContext, Ref, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { Icon } from '../../../Icon'
 import { ReplaceText, Text } from '../../../Text'
+import { useCallbackRef } from '../../../utils'
 import { makeHash } from './utils/makeHash'
 import {
   OptionContext,
@@ -68,6 +69,10 @@ export interface ComboboxOptionObject {
    * The value to match against when suggesting.
    */
   value: string
+  /**
+   * Make sure this option is visible in a long menu.
+   */
+  scrollIntoView?: boolean
 }
 
 export interface HighlightTextProps {
@@ -128,7 +133,12 @@ ComboboxOptionWrapper.displayName = 'ComboboxOptionWrapper'
 
 const ComboboxOptionInternal = forwardRef(
   (
-    { children, highlightText = true, ...props }: ComboboxOptionProps,
+    {
+      children,
+      highlightText = true,
+      scrollIntoView,
+      ...props
+    }: ComboboxOptionProps,
     forwardedRef: Ref<HTMLLIElement>
   ) => {
     const { label, value } = props
@@ -143,6 +153,14 @@ const ComboboxOptionInternal = forwardRef(
       value
     )
 
+    /* scroll menu list to specified element on mount */
+    const [newTriggerElement, callbackRef] = useCallbackRef()
+    useEffect(() => {
+      if (scrollIntoView && newTriggerElement) {
+        newTriggerElement.scrollIntoView()
+      }
+    }, [callbackRef, newTriggerElement, scrollIntoView])
+
     return (
       <ComboboxOptionWrapper
         {...props}
@@ -150,7 +168,7 @@ const ComboboxOptionInternal = forwardRef(
         ref={forwardedRef}
         aria-selected={isActive}
       >
-        <ComboboxOptionDetail>
+        <ComboboxOptionDetail ref={callbackRef}>
           {isSelected && <Icon name="Check" mr={0} />}
         </ComboboxOptionDetail>
         {children || <ComboboxOptionText highlightText={highlightText} />}

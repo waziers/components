@@ -7,6 +7,9 @@ import toString from 'lodash/toString'
 import isFunction from 'lodash/isFunction'
 import find from 'lodash/find'
 import trim from 'lodash/trim'
+import last from 'lodash/last'
+import head from 'lodash/head'
+import sortedIndex from 'lodash/sortedIndex'
 import { BorderProps, SpaceProps } from '@looker/design-tokens'
 import {
   Combobox,
@@ -57,15 +60,15 @@ const generateTimes = (format: formats, interval: intervals) => {
 
   return reduce(
     hours,
-    (result: ComboboxOptionObject[], _, index: number) => {
-      const formatLabel = format === '12h' && (index < 12 ? 'am' : 'pm')
-      const hour = formatTimeString(cycleHourDisplay(format, index))
+    (result: ComboboxOptionObject[], _, hour: number) => {
+      const formatLabel = format === '12h' && (hour < 12 ? 'am' : 'pm')
+      const formattedHour = formatTimeString(cycleHourDisplay(format, hour))
 
       const hourWithMinutes: ComboboxOptionObject[] = map(
         minutes,
         (minute: string) => {
-          const label = trim(`${hour}:${minute} ${formatLabel || ''}`)
-          const value = `${formatTimeString(index)}:${minute}` // value always in 24hr time
+          const label = trim(`${formattedHour}:${minute} ${formatLabel || ''}`)
+          const value = `${formatTimeString(hour)}:${minute}` // value always in 24hr time
           return {
             label,
             value,
@@ -79,6 +82,28 @@ const generateTimes = (format: formats, interval: intervals) => {
 }
 
 const parseBase10Int = (value: string) => parseInt(value, 10)
+
+const formatCurrentTime = (interval: intervals) => {
+  const minuteOptions = map(generateMinuteIntervals(interval), parseBase10Int)
+  const now = new Date()
+  const currentMinute = now.getMinutes()
+
+  // round current minute to closest option
+  const index = sortedIndex(minuteOptions, currentMinute)
+  const optionBefore =
+    minuteOptions[index - 1] || (head(minuteOptions) as number)
+  const optionAfter = minuteOptions[index] || (last(minuteOptions) as number)
+  const roundedMinute =
+    currentMinute - optionBefore < optionAfter - currentMinute
+      ? optionBefore
+      : optionAfter
+
+  // format and return time string
+  const formattedHour = formatTimeString(now.getHours())
+  const formattedMinute = formatTimeString(roundedMinute)
+
+  return `${formattedHour}:${formattedMinute}`
+}
 
 const isValidTimeInput = (value?: string) => {
   if (!value) {
@@ -118,6 +143,28 @@ const matchStringValueToOption = (
   return undefined
 }
 
+// choose one option to scroll into visible menu area
+const setScrollIntoView = (
+  options: ComboboxOptionObject[],
+  interval: intervals,
+  selectedOption?: ComboboxOptionObject
+) => {
+  // CASE 1: scroll currently selected option into view
+  if (selectedOption) {
+    return map(options, option =>
+      selectedOption.value === option.value
+        ? { ...option, scrollIntoView: true }
+        : option
+    )
+  }
+
+  // CASE 2: scroll current time into view
+  const now = formatCurrentTime(interval)
+  return map(options, option =>
+    option.value === now ? { ...option, scrollIntoView: true } : option
+  )
+}
+
 export const InputTimeSelect: FC<InputTimeSelectProps> = ({
   interval = 15,
   format = '12h',
@@ -154,12 +201,18 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
     }
   }
 
+  const timeOptionsFocused = setScrollIntoView(
+    timeOptions,
+    interval,
+    selectedOption
+  )
+
   return (
     <InputTimeSelectWrapper>
-      <Combobox value={selectedOption} onChange={handleChange}>
+      <Combobox value={selectedOption} onChange={handleChange} openOnFocus>
         <ComboboxInput placeholder="Select time" />
         <ComboboxList>
-          {timeOptions.map((option, index) => (
+          {timeOptionsFocused.map((option, index) => (
             <ComboboxOption {...option} key={index} />
           ))}
         </ComboboxList>

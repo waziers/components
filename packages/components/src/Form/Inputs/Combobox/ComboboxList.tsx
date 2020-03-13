@@ -156,6 +156,7 @@ const comboboxListStyles = css<ComboboxListInternalProps>`
   list-style-type: none;
   margin: 0;
   padding: ${props => (props.isMulti ? props.theme.space.xsmall : 0)} 0;
+  max-height: 30rem;
 `
 
 export const ComboboxList = styled(ComboboxListInternal).attrs({
