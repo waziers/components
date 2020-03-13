@@ -83,6 +83,7 @@ const generateTimes = (format: formats, interval: intervals) => {
 
 const parseBase10Int = (value: string) => parseInt(value, 10)
 
+// takes a non-normalized time value (e.g. 10:13) and rounds it to a valid interval (e.g. 10:15)
 const matchClosestMinute = (interval: intervals, timeCode?: string) => {
   const minuteOptions = map(generateMinuteIntervals(interval), parseBase10Int)
   const now = new Date()
