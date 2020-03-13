@@ -83,10 +83,15 @@ const generateTimes = (format: formats, interval: intervals) => {
 
 const parseBase10Int = (value: string) => parseInt(value, 10)
 
-const formatCurrentTime = (interval: intervals) => {
+const matchClosestMinute = (interval: intervals, timeCode?: string) => {
   const minuteOptions = map(generateMinuteIntervals(interval), parseBase10Int)
   const now = new Date()
-  const currentMinute = now.getMinutes()
+  const currentMinute = timeCode
+    ? parseBase10Int(timeCode.split(':')[1])
+    : now.getMinutes()
+  const currentHour = timeCode
+    ? parseBase10Int(timeCode.split(':')[0])
+    : now.getHours()
 
   // round current minute to closest option
   const index = sortedIndex(minuteOptions, currentMinute)
@@ -99,7 +104,7 @@ const formatCurrentTime = (interval: intervals) => {
       : optionAfter
 
   // format and return time string
-  const formattedHour = formatTimeString(now.getHours())
+  const formattedHour = formatTimeString(currentHour)
   const formattedMinute = formatTimeString(roundedMinute)
 
   return `${formattedHour}:${formattedMinute}`
@@ -152,14 +157,14 @@ const setScrollIntoView = (
   // CASE 1: scroll currently selected option into view
   if (selectedOption) {
     return map(options, option =>
-      selectedOption.value === option.value
+      matchClosestMinute(interval, selectedOption.value) === option.value
         ? { ...option, scrollIntoView: true }
         : option
     )
   }
 
   // CASE 2: scroll current time into view
-  const now = formatCurrentTime(interval)
+  const now = matchClosestMinute(interval)
   return map(options, option =>
     option.value === now ? { ...option, scrollIntoView: true } : option
   )
@@ -169,7 +174,7 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
   interval = 15,
   format = '12h',
   onChange,
-  value,
+  value = '',
   defaultValue,
 }) => {
   if (!isValidTimeInput(value) || !isValidTimeInput(defaultValue)) {
@@ -206,7 +211,7 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
   const timeOptionsFocused = setScrollIntoView(
     timeOptions,
     interval,
-    selectedOption
+    selectedOption || { value }
   )
 
   return (
