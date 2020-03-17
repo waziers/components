@@ -54,11 +54,11 @@ import {
   ComboboxContextProps,
   ComboboxMultiContext,
 } from './ComboboxContext'
+import { ComboboxData, ComboboxMultiData } from './utils/state'
 import { getComboboxText } from './utils/getComboboxText'
 import { useOptionEvents } from './utils/useOptionEvents'
 import { useOptionStatus } from './utils/useOptionStatus'
 import { useAddOptionToContext } from './utils/useAddOptionToContext'
-import { ComboboxData, ComboboxMultiData } from './utils/state'
 
 export interface ComboboxOptionObject {
   /**
@@ -143,7 +143,14 @@ const ComboboxOptionInternal = forwardRef(
   ) => {
     const { label, value } = props
 
-    useAddOptionToContext<ComboboxContextProps>(ComboboxContext, value, label)
+    const { transition } = useContext(ComboboxContext)
+
+    useAddOptionToContext<ComboboxContextProps>(
+      ComboboxContext,
+      value,
+      label,
+      scrollIntoView
+    )
     const optionEvents = useOptionEvents<ComboboxContextProps>(
       props,
       ComboboxContext
@@ -159,7 +166,14 @@ const ComboboxOptionInternal = forwardRef(
       if (scrollIntoView && newTriggerElement) {
         newTriggerElement.scrollIntoView()
       }
-    }, [callbackRef, newTriggerElement, scrollIntoView])
+    }, [
+      callbackRef,
+      label,
+      newTriggerElement,
+      scrollIntoView,
+      transition,
+      value,
+    ])
 
     return (
       <ComboboxOptionWrapper
