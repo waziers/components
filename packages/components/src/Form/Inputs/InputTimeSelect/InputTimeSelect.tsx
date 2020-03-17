@@ -1,10 +1,17 @@
-import React, { FC, useState, useEffect, SyntheticEvent } from 'react'
+import React, {
+  KeyboardEvent,
+  FC,
+  useState,
+  useEffect,
+  SyntheticEvent,
+} from 'react'
 import styled from 'styled-components'
 import reduce from 'lodash/reduce'
 import map from 'lodash/map'
 import padStart from 'lodash/padStart'
 import toString from 'lodash/toString'
 import isFunction from 'lodash/isFunction'
+import isNumber from 'lodash/isNumber'
 import find from 'lodash/find'
 import trim from 'lodash/trim'
 import last from 'lodash/last'
@@ -47,6 +54,14 @@ const cycleHourDisplay = (format: formats, hour: number) => {
 
 const formatTimeString = (number: number) => {
   return padStart(toString(number), 2, '0')
+}
+
+const formatLabel = (format: formats, hour: number, minute: number) => {
+  const formattedHour = formatTimeString(cycleHourDisplay(format, hour))
+  const formattedMinute = formatTimeString(minute)
+  const period = format === '12h' && (hour < 12 ? 'am' : 'pm')
+
+  return trim(`${formattedHour}:${formattedMinute} ${period || ''}`)
 }
 
 const generateMinuteIntervals = (interval: intervals) => {
@@ -125,17 +140,31 @@ const isValidTimeInput = (value?: string) => {
 }
 
 // take in a string value ('03:45') and return a formatted option object
-// e.g. // e.g. {label:'03:45 am', value: '03:45'}
+// e.g. {label:'03:45 am', value: '03:45'}
 const createOptionFromStringValue = (format: formats, value: string) => {
   const [hour, minute] = map(value.split(':'), parseBase10Int)
-  const formattedHour = formatTimeString(cycleHourDisplay(format, hour))
-  const formattedMinute = formatTimeString(minute)
-  const formatLabel = format === '12h' && (hour < 12 ? 'am' : 'pm')
 
   return {
-    label: `${formattedHour}:${formattedMinute} ${formatLabel || ''}`,
+    label: formatLabel(format, hour, minute),
     value,
   }
+}
+
+// take in a shorthand string label ('2pm') and return a formatted object
+// e.g. {label: '02:00 pm', value: '14:00'}
+const createOptionFromLabel = (format: formats, label: string) => {
+  const period = label.indexOf('p') > -1 ? 'pm' : 'am'
+  const numericTime = label.replace(/[apm]/g, '')
+  const [hour = 0, minute = 0] = numericTime.split(':').map(parseBase10Int)
+
+  if (isNumber(hour) && isNumber(minute)) {
+    const hr24 = hour + (period === 'pm' ? 12 : 0)
+    const optionLabel = formatLabel(format, hr24, minute)
+    const optionValue = `${formatTimeString(hr24)}:${formatTimeString(minute)}`
+    return { label: optionLabel, value: optionValue }
+  }
+
+  return undefined
 }
 
 // pass in a string value ('03:45') and return full option object
@@ -238,6 +267,15 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
     setInputTextValue('')
   }
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const option = createOptionFromLabel(format, inputTextValue)
+      if (option) {
+        handleChange(option)
+      }
+    }
+  }
+
   // scroll dropdown to relevant value
   // inputTextValue: user input typeahead match
   // selectedOption.value: current component state
@@ -258,6 +296,7 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
           placeholder="Select time"
           onChange={handleTextInputChange}
           onBlur={handleTextInputBlur}
+          onKeyDown={handleKeyDown}
         />
         <ComboboxList persistSelection>
           {timeOptionsFocused.map((option, index) => (
