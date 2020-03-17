@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useEffect, SyntheticEvent } from 'react'
 import styled from 'styled-components'
 import reduce from 'lodash/reduce'
 import map from 'lodash/map'
@@ -124,6 +124,22 @@ const isValidTimeInput = (value?: string) => {
   return false
 }
 
+// take in a string value ('03:45') and return a formatted option object
+// e.g. // e.g. {label:'03:45 am', value: '03:45'}
+const createOptionFromStringValue = (format: formats, value: string) => {
+  const [hour, minute] = map(value.split(':'), parseBase10Int)
+  const formattedHour = formatTimeString(cycleHourDisplay(format, hour))
+  const formattedMinute = formatTimeString(minute)
+  const formatLabel = format === '12h' && (hour < 12 ? 'am' : 'pm')
+
+  return {
+    label: `${formattedHour}:${formattedMinute} ${formatLabel || ''}`,
+    value,
+  }
+}
+
+// pass in a string value ('03:45') and return full option object
+// e.g. {label:'03:45 am', value: '03:45'}
 const matchStringValueToOption = (
   options: ComboboxOptionObject[],
   format: formats,
@@ -131,25 +147,28 @@ const matchStringValueToOption = (
 ) => {
   if (value && isValidTimeInput(value)) {
     const option = find(options, { value: value })
+    return option || createOptionFromStringValue(format, value)
+  }
+  return undefined
+}
 
-    if (option) {
-      return option
-    } else {
-      const [hour, minute] = map(value.split(':'), parseBase10Int)
-      const formattedHour = formatTimeString(cycleHourDisplay(format, hour))
-      const formattedMinute = formatTimeString(minute)
-      const formatLabel = format === '12h' && (hour < 12 ? 'am' : 'pm')
-
-      return {
-        label: `${formattedHour}:${formattedMinute} ${formatLabel || ''}`,
-        value,
-      }
-    }
+// take in a string label ('1:45 pm') and returns matching object
+// e.g. {label: '01:45 pm', value: '13:45'}
+// used in controlled components where value might not match the list of options
+const matchStringLabelToOption = (
+  options: ComboboxOptionObject[],
+  label?: string
+) => {
+  if (label) {
+    return find(options, o => {
+      return o.label ? o.label.indexOf(label) >= 0 : false
+    })
   }
   return undefined
 }
 
 // choose one option to scroll into visible menu area
+// adds {scrollIntoView: true} metadata to matching option
 const setScrollIntoView = (
   options: ComboboxOptionObject[],
   interval: intervals,
@@ -192,6 +211,8 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
     MaybeComboboxOptionObject
   >()
 
+  const [inputTextValue, setInputTextValue] = useState('')
+
   useEffect(() => {
     setSelectedOption(
       matchStringValueToOption(timeOptions, format, value || defaultValue)
@@ -209,16 +230,35 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
     }
   }
 
+  const handleTextInputChange = (e: SyntheticEvent) => {
+    setInputTextValue((e.target as HTMLInputElement).value)
+  }
+
+  const handleTextInputBlur = () => {
+    setInputTextValue('')
+  }
+
+  // scroll dropdown to relevant value
+  // inputTextValue: user input typeahead match
+  // selectedOption.value: current component state
+  // value: prop value passed in externally
+  const optionToFocus =
+    matchStringLabelToOption(timeOptions, inputTextValue) || selectedOption
+
   const timeOptionsFocused = setScrollIntoView(
     timeOptions,
     interval,
-    selectedOption || { value }
+    optionToFocus
   )
 
   return (
     <InputTimeSelectWrapper>
       <Combobox value={selectedOption} onChange={handleChange}>
-        <ComboboxInput placeholder="Select time" />
+        <ComboboxInput
+          placeholder="Select time"
+          onChange={handleTextInputChange}
+          onBlur={handleTextInputBlur}
+        />
         <ComboboxList persistSelection>
           {timeOptionsFocused.map((option, index) => (
             <ComboboxOption {...option} key={index} />
