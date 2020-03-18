@@ -11,7 +11,6 @@ import map from 'lodash/map'
 import padStart from 'lodash/padStart'
 import toString from 'lodash/toString'
 import isFunction from 'lodash/isFunction'
-import isNumber from 'lodash/isNumber'
 import find from 'lodash/find'
 import trim from 'lodash/trim'
 import last from 'lodash/last'
@@ -126,11 +125,13 @@ const matchClosestMinute = (interval: intervals, timeCode?: string) => {
   return `${formattedHour}:${formattedMinute}`
 }
 
-const isValidTimeInput = (value?: string) => {
+// take a 24 hour formatted time string ('14:34') and check whether it's a real time of day
+// rejects non-numeric inputs and illogical times ('64:1928')
+const isValidTime = (value?: string) => {
   if (!value) {
     return true
   }
-  const [hour, minute] = map(value.split(':'), parseBase10Int)
+  const [hour = 0, minute = 0] = map(value.split(':'), parseBase10Int)
 
   if (hour < 24 && minute <= 60) {
     return true
@@ -156,12 +157,11 @@ const createOptionFromLabel = (format: formats, label: string) => {
   const period = label.indexOf('p') > -1 ? 'pm' : 'am'
   const numericTime = label.replace(/[apm]/g, '')
   const [hour = 0, minute = 0] = numericTime.split(':').map(parseBase10Int)
+  const hr24 = hour + (period === 'pm' ? 12 : 0)
+  const value = `${formatTimeString(hr24)}:${formatTimeString(minute)}`
 
-  if (isNumber(hour) && isNumber(minute)) {
-    const hr24 = hour + (period === 'pm' ? 12 : 0)
-    const optionLabel = formatLabel(format, hr24, minute)
-    const optionValue = `${formatTimeString(hr24)}:${formatTimeString(minute)}`
-    return { label: optionLabel, value: optionValue }
+  if (isValidTime(value)) {
+    return { label: formatLabel(format, hr24, minute), value }
   }
 
   return undefined
@@ -174,7 +174,7 @@ const matchStringValueToOption = (
   format: formats,
   value?: string
 ) => {
-  if (value && isValidTimeInput(value)) {
+  if (value && isValidTime(value)) {
     const option = find(options, { value: value })
     return option || createOptionFromStringValue(format, value)
   }
@@ -226,7 +226,7 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
   value = '',
   defaultValue,
 }) => {
-  if (!isValidTimeInput(value) || !isValidTimeInput(defaultValue)) {
+  if (!isValidTime(value) || !isValidTime(defaultValue)) {
     // eslint-disable-next-line no-console
     console.error(
       `Invalid time (${value ||
@@ -254,7 +254,7 @@ export const InputTimeSelect: FC<InputTimeSelectProps> = ({
   ) => {
     setSelectedOption(newSelectedOption)
     const newValue = newSelectedOption ? newSelectedOption.value : undefined
-    if (isFunction(onChange) && isValidTimeInput(newValue)) {
+    if (isFunction(onChange) && isValidTime(newValue)) {
       onChange(newValue)
     }
   }
